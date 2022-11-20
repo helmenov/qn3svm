@@ -14,13 +14,46 @@ This implementation provides both a L-BFGS optimization scheme for semi-supvised
 
 ## modification from [NekoYIQ/QNS3VM](https://www.github.com/NekoYIQ/QNS3VM)
 
+### `class qns3vm.QN_S3VM(X_l, L_l, X_u, lam, lamU, sigma, kernel_type, estimate_r)`
+
+`L_l` must labeled 2-classes
+
+### `class qns3vm.QN_S3VM_OVR(X_l, L_l, X_u, lam, lamU, sigma, kernel_type, estimate_r)`
+
+### `qns3vm.datasets`
+
+- `X_train_l, L_train_l, X_train_u, X_test, L_test = get_moons_data()`
+- `X_train_l, L_train_l, X_train_u, X_test, L_test = get_text_data()`
+- `X_train_l, L_train_l, X_train_u, X_test, L_test = get_gaussian_data()`
+
+### `qns3vm.tools`
+
+- `plot_distribution(ax,clf,X_train_l, L_train_l, X_test, L_test)->None`
+- `classification_error(preds, L_test)->float`
 
 # RUNNING THE EXAMPLES
 
-For a description of the data sets, see the paper mentioned above and the references therein. Running the command "python qns3vm.py" should yield an output similar to:
+For a description of the data sets, see the paper mentioned above and the references therein.
 
 | data set instance | # of labeled patterns | # of unlabeled patterns | # of test patterns | Time needed to compute the model in sec. | Classification error of QN-S3VM |
 |---|---|---|---|---|---|
 |Sparse text|48|924|974|0.775886058807|0.0667351129363|
 |Dense gaussian|25|225|250|0.464584112167|0.012|
 |Dense moons|5|495|500|0.69714307785|0.0|
+
+```{python}
+from qns3vm import QN_S3vm
+from qns3vm.datasets import get_moons_data
+from matplotlib import pyplot as plt
+
+X_train_l, L_train_l, X_train_u, X_test, L_test = get_moons_data()
+clf = QN_S3VM(X_train_l, L_train_l, X_train_u, lam=, lamU=, sigma=, kernel_type="RBF", estimate_r=0)
+clf.train()
+preds = clf.predict(X_test)
+error = classification_error(preds,L_test)
+print(f"classification error of QN-S3VM: {error}")
+
+figure = plt.figure()
+ax = figure.add_subplot(1,1,1)
+plot_distribution(ax, clf, X_train_l, L_train_l, X_test, L_test)
+```
