@@ -816,7 +816,7 @@ class LinearKernel():
         self._data2 = np.array(data2, ndmin=2)
         assert self._data1.shape[1] == (self._data2.T).shape[0]
         try:
-            return self._data1 * self._data2.T
+            return self._data1 @ self._data2.T
         except:
             logging.error("Error while computing kernel matrix: " + str(np.e))
             sys.exit()
