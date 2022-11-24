@@ -238,7 +238,7 @@ class QN_S3VM_Dense:
         """
         Intializes the S3VM optimizer.
         """
-        print(f"Dense model selected")
+        #print(f"Dense model selected")
         self.__random_generator = random_generator
         self.__X_l, self.__X_u, self.__L_l = X_l, X_u, L_l
         assert len(X_l) == len(L_l)
@@ -431,7 +431,7 @@ class QN_S3VM_Dense:
             fprime=self.__getFitness_Prime, maxfun=self.__BFGS_maxfun, factr=self.__BFGS_factr, \
             pgtol=self.__BFGS_pgtol, iprint=self.__BFGS_verbose)
         self.__needed_function_calls += int(d['funcalls'])
-        print(f"{d['warnflag'] = },{d['task'] = }")
+        logging.info(f"{d['warnflag'] = },{d['task'] = }")
         return c_opt
 
     def __initializeMatrices(self):
@@ -1012,7 +1012,7 @@ class QN_S3VM_OVR():
         clf = list()
         S = set(L_l)
         self.labels = [d for d in S]
-        print(self.labels)
+        print(f"Labels to predict = {self.labels}")
         for i, p in enumerate(self.labels):
             L_l_p = [1 if yy==p else -1 for yy in L_l]
             clf_p = QN_S3VM(X_l, L_l_p, X_u, random_generator, ** kw)
@@ -1030,5 +1030,6 @@ class QN_S3VM_OVR():
                 confidence = confidence_p
             else:
                 confidence = np.c_[confidence, confidence_p]
+        logging.info(f"{confidence = }")
         preds = [self.labels[x] for x in np.argmax(confidence, axis=1)]
         return preds
