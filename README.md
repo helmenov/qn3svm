@@ -12,7 +12,7 @@ This implementation provides both a L-BFGS optimization scheme for semi-supvised
 }
 ```
 
-## modification from [NekoYIQ/QNS3VM](https://www.github.com/NekoYIQ/QNS3VM)
+## modification from [NekoYIQ/QNS3VM](https://github.com/NekoYIQI/QNS3VM) or [tmadl/semisup-learn](https://github.com/tmadl/semisup-learn)
 
 ### `class qns3vm.QN_S3VM(X_l, L_l, X_u, lam, lamU, sigma, kernel_type, estimate_r)`
 
@@ -21,6 +21,8 @@ This implementation provides both a L-BFGS optimization scheme for semi-supvised
 ### `class qns3vm.QN_S3VM_OVR(X_l, L_l, X_u, lam, lamU, sigma, kernel_type, estimate_r)`
 
 ### `qns3vm.datasets`
+
+data acquiring functions. these are from original example's main code.
 
 - `X_train_l, L_train_l, X_train_u, X_test, L_test = get_moons_data()`
 - `X_train_l, L_train_l, X_train_u, X_test, L_test = get_text_data()`
