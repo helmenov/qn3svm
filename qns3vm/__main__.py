@@ -252,8 +252,9 @@ class QN_S3VM_Dense:
         assert len(X_l) == len(L_l)
 
         # self.__X : self.__X_l + self.__X_u
-        self.__X = cp.deepcopy(self.__X_l)
-        self.__X.extend(cp.deepcopy(self.__X_u))
+        self.__X = cp.deepcopy(self.__X_l).tolist()
+        self.__X.extend(cp.deepcopy(self.__X_u).tolist())
+        self.__X = check_array(self.__X)
 
         self.__size_l, self.__size_u, self.__size_n = len(X_l), len(X_u), len(X_l) + len(X_u)
 
