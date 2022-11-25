@@ -84,6 +84,8 @@ from scipy.sparse.csc import csc_matrix
 
 warnings.simplefilter('error')
 
+from sklearn.utils import check_array, check_X_y
+
 __author__ = 'Fabian Gieseke, Antti Airola, Tapio Pahikkala, Oliver Kramer'
 __version__ = '0.1'
 
@@ -139,7 +141,8 @@ class QN_S3VM:
         BFGS_factr -- BFGS parameter (default 1E12)
         BFGS_pgtol -- BFGS parameter (default 1.0000000000000001e-05)
         """
-
+        X_l, L_l = check_X_y(X_l, L_l)
+        X_u = check_array(X_u)
         # Initiate model for sparse data
         if isinstance(X_l, csc_matrix):
             self.__data_type = "sparse"
@@ -173,6 +176,7 @@ class QN_S3VM:
         Returns:
         The predictions for the list X of patterns.
         """
+        X = check_array(X)
         return self.__model.getPredictions(X, real_valued=False)
 
     def predict(self, x):
@@ -185,6 +189,7 @@ class QN_S3VM:
         Returns:
         The prediction for x.
         """
+        x = check_array(x)
         return self.__model.predict(x)
 
     def predictValue(self, x):
@@ -197,6 +202,7 @@ class QN_S3VM:
         Returns:
         The (real) prediction value for x.
         """
+        x = check_array(x)
         return self.__model.predictValue(x)
 
     def getNeededFunctionCalls(self):
@@ -240,6 +246,8 @@ class QN_S3VM_Dense:
         """
         #print(f"Dense model selected")
         self.__random_generator = random_generator
+        X_l, L_l = check_X_y(X_l, L_l)
+        X_u = check_array(X_u)
         self.__X_l, self.__X_u, self.__L_l = X_l, X_u, L_l
         assert len(X_l) == len(L_l)
 
@@ -276,6 +284,7 @@ class QN_S3VM_Dense:
         Returns:
         The predictions for the list X of patterns.
         """
+        X = check_array(X)
         KNR = self.__kernel.computeKernelMatrix(X, self.__Xreg)
         KNU_bar = self.__kernel.computeKernelMatrix(X, self.__X_u_subset, symmetric=False)
         KNU_bar_horizontal_sum = (1.0 / len(self.__X_u_subset)) * KNU_bar.sum(axis=1)
@@ -298,6 +307,7 @@ class QN_S3VM_Dense:
         Returns:
         The prediction for x.
         """
+        x = check_array(x)
         return self.getPredictions([x], real_valued=False)[0]
 
     def predictValue(self, x):
@@ -310,6 +320,7 @@ class QN_S3VM_Dense:
         Returns:
         The (real) prediction value for x.
         """
+        x = check_array(x)
         return self.getPredictions(x, real_valued=True)[0]
 
     def getNeededFunctionCalls(self):
@@ -580,6 +591,8 @@ class QN_S3VM_Sparse:
         self.__random_generator = random_generator
         # This is a nuisance, but we may need to pad extra dimensions to either X_l or X_u
         # in case the highest feature indices appear only in one of the two data matrices
+        X_l, L_l = check_X_y(X_l, L_l)
+        X_u = check_array(X_u)
         if X_l.shape[1] > X_u.shape[1]:
             X_u = sparse.hstack([X_u, sparse.coo_matrix(X_u.shape[0], X_l.shape[1] - X_u.shape[1])])
         elif X_l.shape[1] < X_u.shape[1]:
@@ -629,6 +642,7 @@ class QN_S3VM_Sparse:
         c_new = self.__c[:self.__dim-1]
         W = self.X.T*c_new - self.__mean_u.T*np.sum(c_new)
         # Again, possibility of dimension mismatch due to use of sparse matrices
+        X = check_array(X)
         if X.shape[1] > W.shape[0]:
             X = X[:,range(W.shape[0])]
         if X.shape[1] < W.shape[0]:
@@ -651,6 +665,7 @@ class QN_S3VM_Sparse:
         Returns:
         The prediction for x.
         """
+        x = check_array(x)
         return self.getPredictions([x], real_valued=False)[0]
 
     def predictValue(self, x):
@@ -663,6 +678,7 @@ class QN_S3VM_Sparse:
         Returns:
         The (real) prediction value for x.
         """
+        x = check_array(x)
         return self.getPredictions([x], real_valued=True)[0]
 
     def getNeededFunctionCalls(self):
@@ -812,8 +828,8 @@ class LinearKernel():
         Computes the kernel matrix
         """
         logging.debug("Starting Linear Kernel Matrix Computation...")
-        self._data1 = np.array(data1, ndmin=2)
-        self._data2 = np.array(data2, ndmin=2)
+        self._data1 = check_array(data1)
+        self._data2 = check_array(data2)
         assert self._data1.shape[1] == (self._data2.T).shape[0]
         try:
             return self._data1 @ self._data2.T
@@ -826,8 +842,8 @@ class LinearKernel():
         """
         Returns a single kernel value.
         """
-        xi = np.array(xi)
-        xj = np.array(xj)
+        xi = check_array(xi)
+        xj = check_array(xj)
         val = np.dot(xi, xj)
         return val
 
@@ -844,8 +860,8 @@ class DictLinearKernel():
         Computes the kernel matrix
         """
         logging.debug("Starting Linear Kernel Matrix Computation...")
-        self._data1 = data1
-        self._data2 = data2
+        self._data1 = check_array(data1)
+        self._data2 = check_array(data2)
         self._dim1 = len(data1)
         self._dim2 = len(data2)
         self._symmetric = symmetric
@@ -880,6 +896,8 @@ class DictLinearKernel():
         Returns a single kernel value.
         """
         val = 0.
+        xi = check_array(xi)
+        xj = check_array(xj)
         for key in xi:
             if key in xj:
                 val += xi[key]*xj[key]
@@ -898,10 +916,8 @@ class RBFKernel():
         Computes the kernel matrix
         """
         logging.debug("Starting RBF Kernel Matrix Computation...")
-        self._data1 = np.array(data1,ndmin=2)
-        self._data2 = np.array(data2,ndmin=2)
-        #print(f"{self._data1.shape = }, {self._data2.shape = }")
-        assert self._data1.shape[1] == (self._data2.T).shape[0]
+        self._data1 = check_array(data1)
+        self._data2 = check_array(data2)
         self._dim1 = len(data1)
         self._dim2 = len(data2)
         self._symmetric = symmetric
@@ -944,8 +960,8 @@ class RBFKernel():
         """
         Returns a single kernel value.
         """
-        xi = np.array(xi)
-        xj = np.array(xj)
+        xi = check_array(xi)
+        xj = check_array(xj)
         diff = xi-xj
         val = np.exp(-self.__sigma_squared_inv * (np.dot(diff, diff)))
         return val
@@ -963,8 +979,8 @@ class DictRBFKernel():
         Computes the kernel matrix
         """
         logging.debug("Starting RBF Kernel Matrix Computation...")
-        self._data1 = data1
-        self._data2 = data2
+        self._data1 = check_array(data1)
+        self._data2 = check_array(data2)
         self._dim1 = len(data1)
         self._dim2 = len(data2)
         self._symmetric = symmetric
@@ -997,6 +1013,8 @@ class DictRBFKernel():
         """
         Returns a single kernel value.
         """
+        xi = check_array(xi)
+        xj = check_array(xj)
         diff = xi.copy()
         for key in xj:
             if key in diff:
@@ -1009,6 +1027,8 @@ class DictRBFKernel():
 
 class QN_S3VM_OVR():
     def __init__(self, X_l, L_l, X_u, random_generator = None, ** kw):
+        X_l, L_l = check_X_y(X_l, L_l)
+        X_u = check_array(X_u)
         clf = list()
         S = set(L_l)
         self.labels = [d for d in S]
@@ -1024,6 +1044,7 @@ class QN_S3VM_OVR():
             p.train()
 
     def predict(self, X_test):
+        X_test = check_array(X_test)
         for i, p in enumerate(self.__clf):
             confidence_p = np.array([[p.predictValue(x)] for x in X_test])
             if i == 0:
