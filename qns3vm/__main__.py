@@ -189,6 +189,7 @@ class QN_S3VM:
         Returns:
         The prediction for x.
         """
+        x = np.array(x).reshape(1,-1)
         x = check_array(x)
         return self.__model.predict(x)
 
@@ -202,6 +203,7 @@ class QN_S3VM:
         Returns:
         The (real) prediction value for x.
         """
+        x = np.array(x).reshape(1,-1)
         x = check_array(x)
         return self.__model.predictValue(x)
 
@@ -308,6 +310,7 @@ class QN_S3VM_Dense:
         Returns:
         The prediction for x.
         """
+        x = np.array(x).reshape(1,-1)
         x = check_array(x)
         return self.getPredictions([x], real_valued=False)[0]
 
@@ -321,6 +324,7 @@ class QN_S3VM_Dense:
         Returns:
         The (real) prediction value for x.
         """
+        x = np.array(x).reshape(1,-1)
         x = check_array(x)
         return self.getPredictions(x, real_valued=True)[0]
 
@@ -666,6 +670,7 @@ class QN_S3VM_Sparse:
         Returns:
         The prediction for x.
         """
+        x = np.array(x).reshape(1,-1)
         x = check_array(x)
         return self.getPredictions([x], real_valued=False)[0]
 
@@ -679,6 +684,7 @@ class QN_S3VM_Sparse:
         Returns:
         The (real) prediction value for x.
         """
+        x = np.array(x).reshape(1,-1)
         x = check_array(x)
         return self.getPredictions([x], real_valued=True)[0]
 
