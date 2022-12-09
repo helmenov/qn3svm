@@ -1104,7 +1104,7 @@ class QN_S3VM_OVO():
                 L[j, k] += 1
         preds = list()
         for i in range(len_test):
-            preds_ = self.labels[np.argmax(L[i,:], axis=1)]
+            preds_ = self.labels[np.argmax(L[i,:], axis=0)]
             preds.append(preds_)
         return preds
 
