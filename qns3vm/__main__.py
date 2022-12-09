@@ -1079,8 +1079,8 @@ class QN_S3VM_OVO():
             L_l_p = np.ones_like(L_l[L_l==p])
             X_l_q = X_l[L_l==q]
             L_l_q = -np.ones_like(L_l[L_l==q])
-            X_l_pq = np.concat([X_l_p, X_l_q],axis=0)
-            L_l_pq = np.concat([L_l_p, L_l_q],axis=0)
+            X_l_pq = np.concatenate([X_l_p, X_l_q],axis=0)
+            L_l_pq = np.concatenate([L_l_p, L_l_q],axis=0)
             clf_ = QN_S3VM(X_l_pq, L_l_pq, X_u, random_generator, **kw)
             clf.append(clf_)
             pair.append([p,q])
