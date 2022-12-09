@@ -1038,7 +1038,7 @@ class QN_S3VM_OVR():
         X_u = check_array(X_u)
         clf = list()
         S = set(L_l)
-        self.labels = [d for d in S]
+        self.labels = sorted([d for d in S])
         print(f"Labels to predict = {self.labels}")
         for i, p in enumerate(self.labels):
             L_l_p = [1 if yy==p else -1 for yy in L_l]
@@ -1061,3 +1061,50 @@ class QN_S3VM_OVR():
         logging.info(f"{confidence = }")
         preds = [self.labels[x] for x in np.argmax(confidence, axis=1)]
         return preds
+
+class QN_S3VM_OVO():
+    def __init__(self, X_l, L_l, X_u, random_generator = None, **kw):
+        X_l, L_l = check_X_y(X_l, L_l)
+        X_u = check_array(X_u)
+        S = set(L_l)
+        self.labels = np.array(sorted([d for d in S]))
+        print(f"Labels to predict = {self.labels}")
+
+        from itertools import combinations
+
+        pair = list()
+        clf = list()
+        for p,q in combinations(self.labels,2):
+            X_l_p = X_l[L_l==p]
+            L_l_p = np.ones_like(L_l[L_l==p])
+            X_l_q = X_l[L_l==q]
+            L_l_q = -np.ones_like(L_l[L_l==q])
+            X_l_pq = np.concat([X_l_p, X_l_q],axis=0)
+            L_l_pq = np.concat([L_l_p, L_l_q],axis=0)
+            clf_ = QN_S3VM(X_l_pq, L_l_pq, X_u, random_generator, **kw)
+            clf.append(clf_)
+            pair.append([p,q])
+        self.__clf = clf
+        self.__pair = pair
+
+    def train(self):
+        for clf_ in self.__clf:
+            clf_.train()
+
+    def predict(self, X_test):
+        X_test = check_array(X_test)
+        len_test = X_test.shape[0]
+        L = np.zeros((len_test,len(self.labels)))
+        for i, clf_ in enumerate(self.__clf):
+            for j, l in enumerate(clf_.getPredictions(X_test)):
+                if l==1:
+                    k = np.where(self.labels==self.__pair[i][0])[0]
+                else:
+                    k = np.where(self.labels==self.__pair[i][1])[0]
+                L[j, k] += 1
+        preds = list()
+        for i in range(len_test):
+            preds_ = self.labels[np.argmax(L[i,:], axis=1)]
+            preds.append(preds_)
+        return preds
+
