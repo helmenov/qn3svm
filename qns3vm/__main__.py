@@ -374,6 +374,7 @@ class QN_S3VM_Dense:
             self.__estimate_r = (1.0 / len(self.__L_l)) * np.sum(self.__L_l)
         else:
             self.__estimate_r = 0.0
+        print(f'estimate_r: {self.__estimate_r}')
 
         self.__BFGS_m = int(self.parameters['BFGS_m'])
 
