@@ -1042,7 +1042,7 @@ class QN_S3VM_OVR():
         self.labels = sorted([d for d in S])
         print(f"Labels to predict = {self.labels}")
         for i, p in enumerate(self.labels):
-            L_l_p = [1 if yy==p else -1 for yy in L_l]
+            L_l_p = [p if yy==p else -1 for yy in L_l]
             clf_p = QN_S3VM(X_l, L_l_p, X_u, random_generator, ** kw)
             clf.append(clf_p)
         self.__clf = clf
@@ -1077,9 +1077,9 @@ class QN_S3VM_OVO():
         clf = list()
         for p,q in combinations(self.labels,2):
             X_l_p = X_l[L_l==p]
-            L_l_p = np.ones_like(L_l[L_l==p])
+            L_l_p = p*np.ones_like(L_l[L_l==p])
             X_l_q = X_l[L_l==q]
-            L_l_q = -np.ones_like(L_l[L_l==q])
+            L_l_q = -q*np.ones_like(L_l[L_l==q])
             X_l_pq = np.concatenate([X_l_p, X_l_q],axis=0)
             L_l_pq = np.concatenate([L_l_p, L_l_q],axis=0)
             clf_ = QN_S3VM(X_l_pq, L_l_pq, X_u, random_generator, **kw)
@@ -1098,7 +1098,7 @@ class QN_S3VM_OVO():
         L = np.zeros((len_test,len(self.labels)))
         for i, clf_ in enumerate(self.__clf):
             for j, l in enumerate(clf_.getPredictions(X_test)):
-                if l==1:
+                if l>0:
                     k = np.where(self.labels==self.__pair[i][0])[0]
                 else:
                     k = np.where(self.labels==self.__pair[i][1])[0]
