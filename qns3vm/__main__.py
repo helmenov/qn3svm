@@ -1035,7 +1035,6 @@ class DictRBFKernel():
 
 class QN_S3VM_OVR():
     def __init__(self, X_l, L_l, X_u, random_generator = None, ** kw):
-        X_l, L_l = check_X_y(X_l, L_l)
         X_u = check_array(X_u)
         clf = list()
         S = set(L_l)
@@ -1043,7 +1042,7 @@ class QN_S3VM_OVR():
         print(f"Labels to predict = {self.labels}")
         for i, p in enumerate(self.labels):
             L_l_p = [1 if yy==p else -1 for yy in L_l]
-            L_l_p = check_array(L_l_p)
+            X_l, L_l_p = check_X_y(X_l, L_l_p)
             clf_p = QN_S3VM(X_l, L_l_p, X_u, random_generator, ** kw)
             clf.append(clf_p)
         self.__clf = clf
