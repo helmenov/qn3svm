@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "qns3vm"
-version = "0.1.19"
+version = "0.1.20"
 description = ""
 authors = ["Kotaro SONODA <kotaro1976@gmail.com>"]
 readme = "README.md"

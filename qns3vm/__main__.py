@@ -164,17 +164,6 @@ class QN_S3VM:
         The computed partition for the unlabeled patterns.
         """
 
-        #===mem stat \
-        import sys
-
-        print("{}{: >25}{}{: >10}{}".format('|','Variable Name','|','Memory','|'))
-        print(" ------------------------------------ ")
-        for var_name in dir():
-            if not var_name.startswith("_") and sys.getsizeof(eval(var_name)) > 10000: #ここだけアレンジ
-                print("{}{: >25}{}{: >10}{}".format('|',var_name,'|',sys.getsizeof(eval(var_name)),'|'))
-        #===mem stat /
-
-
         return self.__model.train()
 
     def getPredictions(self, X, real_valued:bool=False):
@@ -1061,6 +1050,19 @@ class QN_S3VM_OVR():
             clf.append(clf_p)
         self.__clf = clf
 
+        #===mem stat \
+        import sys
+
+        print("memstat in OVR__init__")
+        print("{}{: >25}{}{: >10}{}".format('|','Variable Name','|','Memory','|'))
+        print(" ------------------------------------ ")
+        for var_name in dir():
+            if not var_name.startswith("_") and sys.getsizeof(eval(var_name)) > 10000: #ここだけアレンジ
+                print("{}{: >25}{}{: >10}{}".format('|',var_name,'|',sys.getsizeof(eval(var_name)),'|'))
+        #===mem stat /
+
+
+
     def train(self):
         for i, p in enumerate(self.__clf):
             p.train()
@@ -1075,6 +1077,15 @@ class QN_S3VM_OVR():
                 confidence = np.c_[confidence, confidence_p]
         logging.info(f"{confidence = }")
         preds = [self.labels[x] for x in np.argmax(confidence, axis=1)]
+
+        print("memstat in OVR__predict__")
+        print("{}{: >25}{}{: >10}{}".format('|','Variable Name','|','Memory','|'))
+        print(" ------------------------------------ ")
+        for var_name in dir():
+            if not var_name.startswith("_") and sys.getsizeof(eval(var_name)) > 10000: #ここだけアレンジ
+                print("{}{: >25}{}{: >10}{}".format('|',var_name,'|',sys.getsizeof(eval(var_name)),'|'))
+        #===mem stat /
+
         return preds
 
 class QN_S3VM_OVO():
