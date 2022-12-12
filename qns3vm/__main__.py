@@ -163,6 +163,18 @@ class QN_S3VM:
         Returns:
         The computed partition for the unlabeled patterns.
         """
+
+        #===mem stat \
+        import sys
+
+        print("{}{: >25}{}{: >10}{}".format('|','Variable Name','|','Memory','|'))
+        print(" ------------------------------------ ")
+        for var_name in dir():
+            if not var_name.startswith("_") and sys.getsizeof(eval(var_name)) > 10000: #ここだけアレンジ
+                print("{}{: >25}{}{: >10}{}".format('|',var_name,'|',sys.getsizeof(eval(var_name)),'|'))
+        #===mem stat /
+
+
         return self.__model.train()
 
     def getPredictions(self, X, real_valued:bool=False):
@@ -867,16 +879,6 @@ class DictLinearKernel():
         """
         Computes the kernel matrix
         """
-        #===mem stat \
-        import sys
-
-        print("{}{: >25}{}{: >10}{}".format('|','Variable Name','|','Memory','|'))
-        print(" ------------------------------------ ")
-        for var_name in dir():
-            if not var_name.startswith("_") and sys.getsizeof(eval(var_name)) > 10000: #ここだけアレンジ
-                print("{}{: >25}{}{: >10}{}".format('|',var_name,'|',sys.getsizeof(eval(var_name)),'|'))
-        #===mem stat /
-
 
         logging.debug("Starting Linear Kernel Matrix Computation...")
         self._data1 = check_array(data1)
@@ -934,6 +936,7 @@ class RBFKernel():
         """
         Computes the kernel matrix
         """
+
         logging.debug("Starting RBF Kernel Matrix Computation...")
         self._data1 = check_array(data1)
         self._data2 = check_array(data2)
