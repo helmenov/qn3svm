@@ -152,7 +152,7 @@ class QN_S3VM:
         # Initiate model for dense data
         elif (isinstance(X_l[0], list)) or (isinstance(X_l[0], np.ndarray)):
             self.__data_type = "dense"
-            self.__model = QN_S3VM_Dense(X_l, L_l, X_u, random_generator, ** kw)
+            self.__model = QN_S3VM_Dense(X_l, L_l, X_u=X_u, random_generator=random_generator, ** kw)
         # Data format unknown
         if self.__model == None:
             logging.info("Data format for patterns is unknown.")
