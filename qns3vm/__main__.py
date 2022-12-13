@@ -1097,7 +1097,8 @@ class DictRBFKernel():
 
 class QN_S3VM_OVR():
     def __init__(self, X_l, L_l, X_u, random_generator = None, ** kw):
-        X_u = check_array(X_u)
+        if X_u is not None:
+            X_u = check_array(X_u)
         clf = list()
         S = set(L_l)
         self.labels = sorted([d for d in S])
@@ -1131,7 +1132,8 @@ class QN_S3VM_OVR():
 class QN_S3VM_OVO():
     def __init__(self, X_l, L_l, X_u, random_generator = None, **kw):
         X_l, L_l = check_X_y(X_l, L_l)
-        X_u = check_array(X_u)
+        if X_u is not None:
+            X_u = check_array(X_u)
         S = set(L_l)
         self.labels = np.array(sorted([d for d in S]))
         print(f"Labels to predict = {self.labels}")
