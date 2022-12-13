@@ -313,7 +313,7 @@ class QN_S3VM_Dense:
 
         # KU_barR_vertical_sum
         # KU_barU_bar_sum
-        if KNU_bar_horizontal_sum is not None and self.__KU_barR_vertical_sum is not None and self.__KU_barU_bar_sum is not None
+        if KNU_bar_horizontal_sum is not None and self.__KU_barR_vertical_sum is not None and self.__KU_barU_bar_sum is not None:
             KNR = KNR - KNU_bar_horizontal_sum[:,np.newaxis] - self.__KU_barR_vertical_sum[np.newaxis,:] + self.__KU_barU_bar_sum
 
         preds = KNR @ self.__c[0:self.__dim-1,:] + self.__c[self.__dim-1,:]
