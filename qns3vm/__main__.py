@@ -557,6 +557,8 @@ class QN_S3VM_Dense:
         #print(f"{preds_labeled =}")
         if self.__KUR is not None:
             preds_unlabeled = self.__KUR @ c_new + b
+        else:
+            preds_unlabeled = None
         #print(f"{preds_unlabeled =}")
         # This vector has a "one" for each "numerically instable" entry; "zeros" for "good ones".
         preds_labeled_conflict_indicator = \
@@ -577,6 +579,8 @@ class QN_S3VM_Dense:
         if preds_unlabeled is not None:
             preds_unlabeled_squared = preds_unlabeled * preds_unlabeled
             term2 = (float(self.__lamU)/float(self.__size_u))*np.sum(np.exp(-self.__s * preds_unlabeled_squared))
+        else:
+            term2 = None
         term3 = self.__lam * (c_new.T @ self.__KRR @ c_new)
         terms = term1 + term3
         if term2 is not None:
@@ -594,6 +598,8 @@ class QN_S3VM_Dense:
         preds_labeled = self.__surrogate_gamma * (1.0 - self.__YL * (self.__KLR @ c_new + b))
         if self.__KUR is not None:
             preds_unlabeled = (self.__KUR @ c_new + b)
+        else:
+            preds_unlabeled = None
         # This vector has a "one" for each "numerically instable" entry; "zeros" for "good ones".
         preds_labeled_conflict_indicator = \
             np.sign(np.sign(preds_labeled/self.__breakpoint_for_exp - 1.0) + 1.0)
@@ -610,9 +616,13 @@ class QN_S3VM_Dense:
             preds_unlabeled_squared_exp_f = preds_unlabeled * preds_unlabeled
             preds_unlabeled_squared_exp_f = np.exp(-self.__s * preds_unlabeled_squared_exp_f)
             preds_unlabeled_squared_exp_f = preds_unlabeled_squared_exp_f * preds_unlabeled
+        else:
+            preds_unlabeled_squared_exp_f = None
         term1 = (-1.0/self.__size_l) * (term1.T @ self.__KLR).T
         if preds_unlabeled_squared_exp_f is not None:
             term2 = ((-2.0 * self.__s * self.__lamU)/float(self.__size_u)) * (preds_unlabeled_squared_exp_f.T @ self.__KUR).T
+        else:
+            term2 = None
         term3 = 2*self.__lam*(self.__KRR @ c_new)
         terms = term1 + term3
         if term2 is not None:
