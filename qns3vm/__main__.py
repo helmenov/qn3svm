@@ -254,7 +254,8 @@ class QN_S3VM_Dense:
         X_l, L_l = check_X_y(X_l, L_l)
         if X_u is not None:
             X_u = check_array(X_u)
-            self.__X_u = X_u
+
+        self.__X_u = X_u
         self.__X_l, self.__L_l = X_l, L_l
 
         assert len(X_l) == len(L_l)
@@ -270,6 +271,8 @@ class QN_S3VM_Dense:
         if X_u is not None:
             self.__size_u = len(X_u)
             self.__size_n += len(X_u)
+        else:
+            self.__size_u = 0
 
         self.__matrices_initialized = False
         self.__setParameters( ** kw)
@@ -497,6 +500,8 @@ class QN_S3VM_Dense:
             # KUR: kernel of X_u vs X_reg
             if self.__X_u is not None:
                 self.__KUR = self.__kernel.computeKernelMatrix(self.__X_u,self.__Xreg, symmetric=False)
+            else:
+                self.__KUR = None
             # KNR: KLRとKURを配置したもの
             if self.__KUR is not None:
                 self.__KNR = cp.deepcopy(np.block([[self.__KLR], [self.__KUR]]))
@@ -509,6 +514,8 @@ class QN_S3VM_Dense:
                 # Center patterns in feature space (with respect to approximated mean of unlabeled patterns in the feature space)
                 subset_unlabled_indices = sorted(self.__random_generator.sample( range(0,len(self.__X_u)), min(self.__max_unlabeled_subset_size, len(self.__X_u)) ))
                 self.__X_u_subset = (np.array(self.__X_u)[subset_unlabled_indices,:].tolist())
+            else:
+                self.__X_u_subset = None
 
             if self.__X_u_subset is not None:
                 self.__KNU_bar = self.__kernel.computeKernelMatrix(self.__X, self.__X_u_subset, symmetric=False)
@@ -517,6 +524,13 @@ class QN_S3VM_Dense:
                 self.__KU_barR_vertical_sum = (1.0 / len(self.__X_u_subset)) * self.__KU_barR.sum(axis=0)
                 self.__KU_barU_bar = self.__kernel.computeKernelMatrix(self.__X_u_subset, self.__X_u_subset, symmetric=False)
                 self.__KU_barU_bar_sum = (1.0 / (len(self.__X_u_subset)))**2 * self.__KU_barU_bar.sum()
+            else:
+                self.__KNU_bar = None
+                self.__KNU_bar_horizontal_sum = None
+                self.__KU_barR = None
+                self.__KU_barR_vertical_sum = None
+                self.__KU_barU_bar = None
+                self.__KU_barU_bar_sum = None
 
             if self.__KNU_bar_horizontal_sum is not None and self.__KU_barR_vertical_sum is not None and self.__KU_barU_bar_sum is not None:
                 self.__KNR = self.__KNR - self.__KNU_bar_horizontal_sum - self.__KU_barR_vertical_sum + self.__KU_barU_bar_sum
@@ -525,6 +539,8 @@ class QN_S3VM_Dense:
             self.__KLR = self.__KNR[range(0,len(self.__X_l)),:]
             if self.__X_u is not None:
                 self.__KUR = self.__KNR[range(len(self.__X_l),len(self.__X)),:]
+            else:
+                self.__KUR = None
 
             self.__matrices_initialized = True
         #print(f"{self.__matrices_initialized =}")
