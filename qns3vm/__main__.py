@@ -312,6 +312,8 @@ class QN_S3VM_Dense:
         if self.__X_u_subset is not None:
             KNU_bar = self.__kernel.computeKernelMatrix(X, self.__X_u_subset, symmetric=False)
             KNU_bar_horizontal_sum = (1.0 / len(self.__X_u_subset)) * KNU_bar.sum(axis=1)
+        else:
+            KNU_bar_horizontal_sum = None
         #print(f"{KNR.shape =}\n{KNU_bar_horizontal_sum.shape = }\n{self.__KU_barR_vertical_sum.shape = }")
 
         # KU_barR_vertical_sum
