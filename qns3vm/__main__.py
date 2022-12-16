@@ -1183,7 +1183,7 @@ class QN_S3VM_OVO():
             pair.append([p,q])
         self.__clf = clf
         self.__pair = pair
-        del X_L_p
+        del X_l_p
         del L_l_p
         del X_l_q
         del L_l_q
