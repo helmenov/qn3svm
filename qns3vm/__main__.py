@@ -1259,7 +1259,7 @@ class QN_S3VM_ECOC():
                 L[j,i]=l
         preds = list()
         for i in range(len_test):
-            H = np.array([scidist.hamming(self.ECOC[k,:],L[i,:]) for k in range(self.labels)])
+            H = np.array([scidist.hamming(self.ECOC[k,:],L[i,:]) for k in range(self.ECOC.shape[0])])
             preds_ = self.labels[np.argmin(H)]
             preds.append(preds_)
         return preds
