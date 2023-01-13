@@ -81,6 +81,7 @@ import numpy as np
 from scipy import optimize, sparse
 from scipy.linalg import eigvalsh
 from scipy.sparse.csc import csc_matrix
+from scipy.spatial import distance as scidist
 
 warnings.simplefilter('error')
 
@@ -1211,4 +1212,60 @@ class QN_S3VM_OVO():
             preds_ = self.labels[np.argmax(L[i,:], axis=0)]
             preds.append(preds_)
         return preds
+
+class QN_S3VM_ECOC():
+    def __init__(self,X_l, L_l, X_u, random_generator = None, **kw):
+        X_l, L_l = check_X_y(X_l, L_l)
+        if X_u is not None:
+            X_u = check_array(X_u)
+        S = set(L_l)
+        self.labels = np.array(sorted([d for d in S]))
+        print(f"Labels to predict = {self.labels}")
+
+        # codeword 行列の生成
+        ECOC = np.eye(3)
+        while ECOC.shape[0] < len(S):
+            len_code = ECOC.shape[1]
+            ECOC = np.c_[ECOC, ECOC]
+            if len_code%2 == 1:
+                ECOC = np.c_[ECOC, np.zeros(shape=(ECOC.shape[0],1))]
+            c = [1 if i%2==0 else 0 for i in range(ECOC.shape[1])]
+            ECOC = np.r_[ECOC, c]
+
+        clf = list()
+        N_clf = ECOC.shape[1]
+        for t in range(N_clf):
+            L_l_p = np.full_like(L_l)
+            for i,v in enumerate(ECOC[:,t].tolist()):
+                L_l_p[L_l==i] = v
+            X_l_p = X_l
+            clf_ = QN_S3VM(X_l, L_l, X_u, random_generator, **kw)
+            clf.append(clf_)
+        self.__clf = clf
+        self.ECOC = ECOC
+
+    def train(self):
+        for clf_ in self.__clf:
+            clf_.train()
+
+    def predict(self, X_test):
+        X_test = check_array(X_test)
+        len_test = X_test.shape[0]
+        len_clf = len(self.__clf)
+        L = np.zeros((len_test,len_clf))
+        for i, clf_ in enumerate(self.__clf):
+            for j, l in enumerate(clf_.getPredictions(X_test)):
+                L[j,i]=l
+        preds = list()
+        for i in range(len_test):
+            H = np.array([scidist.hamming(self.ECOC[k,:],L[i,:]) for k in range(self.labels)])
+            preds_ = self.labels[np.argmin(H)]
+            preds.append(preds_)
+        return preds
+
+
+
+
+
+
 
