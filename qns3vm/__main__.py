@@ -1236,7 +1236,7 @@ class QN_S3VM_ECOC():
         clf = list()
         N_clf = ECOC.shape[1]
         for t in range(N_clf):
-            L_l_p = np.full_like(L_l)
+            L_l_p = np.fill_like(L_l,np.NaN)
             for i,v in enumerate(ECOC[:,t].tolist()):
                 L_l_p[L_l==i] = v
             X_l_p = X_l
