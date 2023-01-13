@@ -1227,10 +1227,14 @@ class QN_S3VM_ECOC():
         while ECOC.shape[0] < len(S):
             len_code = ECOC.shape[1]
             ECOC = np.c_[ECOC, ECOC]
+            print(f'[0],{ECOC}')
             if len_code%2 == 1:
                 ECOC = np.c_[ECOC, np.zeros(shape=(ECOC.shape[0],1))]
-            c = [1 if i%2==0 else 0 for i in range(ECOC.shape[1])]
+                print(f'[1],{ECOC}')
+            c = np.array([1 if i%2==0 else 0 for i in range(ECOC.shape[1])])
+            print(f'{ECOC.shape=}, {c.shape=}')
             ECOC = np.r_[ECOC, c]
+            print(f'[2],{ECOC}')
 
         clf = list()
         N_clf = ECOC.shape[1]
