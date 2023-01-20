@@ -1229,7 +1229,6 @@ class QN_S3VM_ECOC():
             ECOC = np.c_[ECOC, ECOC]
             if len_code%2 == 1:
                 ECOC = np.c_[ECOC, np.zeros(shape=(ECOC.shape[0],1))]
-                print(f'[1],{ECOC}')
             c = np.array([[1 if i%2==0 else 0 for i in range(ECOC.shape[1])]])
             ECOC = np.r_[ECOC, c]
 
@@ -1246,7 +1245,8 @@ class QN_S3VM_ECOC():
         self.ECOC = ECOC
 
     def train(self):
-        for clf_ in self.__clf:
+        for i, clf_ in enumerate(self.__clf):
+            print(f"Now training [{i}/{len(self.__clf)}]")
             clf_.train()
 
     def predict(self, X_test):
@@ -1255,6 +1255,7 @@ class QN_S3VM_ECOC():
         len_clf = len(self.__clf)
         L = np.zeros((len_test,len_clf))
         for i, clf_ in enumerate(self.__clf):
+            print(f"Now predicting by classifier [{i}/{len_clf}]")
             for j, l in enumerate(clf_.getPredictions(X_test)):
                 L[j,i]=l
         preds = list()
