@@ -1,12 +1,12 @@
 [tool.poetry]
 name = "qns3vm"
-version = "0.1.39"
+version = "0.1.40"
 description = ""
 authors = ["Kotaro SONODA <kotaro1976@gmail.com>"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = ">=3.10,<3.11"
+python = "^3.11"
 pandas = "^1.5.1"
 matplotlib = "^3.6.1"
 numpy = "^1.23.5"

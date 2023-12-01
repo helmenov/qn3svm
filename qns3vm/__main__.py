@@ -831,9 +831,15 @@ class QN_S3VM_Sparse:
         return c_current, f_opt
 
     def __localSearch(self, start):
-        c_opt, f_opt, d = optimize.fmin_l_bfgs_b(self.__getFitness, start, m=self.__BFGS_m, \
-                                     fprime=self.__getFitness_Prime, maxfun=self.__BFGS_maxfun,\
-                                     factr=self.__BFGS_factr, pgtol=self.__BFGS_pgtol, iprint=self.__BFGS_verbose)
+        c_opt, f_opt, d = optimize.fmin_l_bfgs_b(
+            func = self.__getFitness,
+            x0 = start,
+            m = self.__BFGS_m,
+            fprime = self.__getFitness_Prime,
+            maxfun = self.__BFGS_maxfun,
+            factr = self.__BFGS_factr,
+            pgtol = self.__BFGS_pgtol,
+            iprint = self.__BFGS_verbose)
         self.__needed_function_calls += int(d['funcalls'])
         return c_opt
 
