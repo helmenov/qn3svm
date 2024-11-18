@@ -1,22 +1,22 @@
-[tool.poetry]
+[project]
 name = "qns3vm"
-version = "0.1.40"
+version = "0.1.41"
 description = ""
-authors = ["Kotaro SONODA <kotaro1976@gmail.com>"]
 readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "numpy>=2.1.3",
+    "pandas>=2.2.3",
+    "scikit-learn>=1.5.2",
+    "scipy>=1.14.1",
+]
+authors = [
+    {"name" = "Kotaro SONODA", "email" = "kotaro1976@gmail.com"}
+]
+keywords = ['QN-S3VM']
 
-[tool.poetry.dependencies]
-python = "^3.11"
-pandas = "^1.5.1"
-matplotlib = "^3.6.1"
-numpy = "^1.23.5"
-scipy = "^1.9.3"
+[dependency-groups]
+dev = [
+    "ipykernel>=6.29.5",
+]
 
-
-[tool.poetry.group.dev.dependencies]
-ipykernel = "^6.17.0"
-scikit-learn = "^1.1.3"
-
-[build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
